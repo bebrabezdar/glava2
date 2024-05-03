@@ -11,12 +11,13 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical" >
+
     <TextView
-        
+        android:id="@+id/question_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="24dp"
-        android:text="@string/question_text" />
+         />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,6 +33,25 @@
                 android:layout_height="wrap_content"
                 android:text="@string/false_button" />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/back_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/arrow_left"
+                    android:paddingHorizontal="50dp"/>
+            <Button
+                android:id="@+id/next_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableRight="@drawable/arrow_right"
+                android:paddingHorizontal="50dp"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 
