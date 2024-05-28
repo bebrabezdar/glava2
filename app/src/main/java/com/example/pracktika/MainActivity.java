@@ -1,8 +1,12 @@
 package com.example.pracktika;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,10 +15,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
+    private static final String KEY_INDEX = "index";
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mNextButton;
     private Button mBackButton;
+    private Button mDeceitButton;
+    private static final int REQUEST_CODE_DECEIT = 0;
+
     private TextView mQuestionTextView;
 
     private Question[] mQuestionBank = new Question[] {
@@ -25,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question_manifest, true),
     };
     private int mCurrentIndex = 0;
+    private boolean mIsDeceiter;
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
         mQuestionTextView.setText(question);
@@ -33,8 +44,15 @@ public class MainActivity extends AppCompatActivity {
         boolean answerIsTrue =
                 mQuestionBank[mCurrentIndex].isAnswerTrue();
         int messageResId = 0;
+
+        if (mIsDeceiter)
+        {
+            messageResId = R.string.judgment_toast;
+        }
+        else {
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast;
+        }
         } else {
             messageResId = R.string.incorrect_toast;
         }
@@ -43,7 +61,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate(Bundle) вызван");
         setContentView(R.layout.activity_main);
+
+
         mQuestionTextView =
                 (TextView) findViewById(R.id.question_text_view);
 
@@ -77,6 +98,65 @@ public class MainActivity extends AppCompatActivity {
                     updateQuestion();
                 }
         });
+        mDeceitButton = (Button)findViewById(R.id.deceit_button);
+        mDeceitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //запуск
+              boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+
+              Intent i = DeceitActivity.newIntent(MainActivity.this, answerIsTrue);
+                startActivityForResult(i, REQUEST_CODE_DECEIT);
+            }
+        });
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+        }
         updateQuestion();
     }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode != Activity.RESULT_OK){
+            return;
+        }
+        if (requestCode == REQUEST_CODE_DECEIT){
+            if (data == null){
+                return;
+            }
+            mIsDeceiter = DeceitActivity.wasAnswerShown(data);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart() вызван");
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause() вызван");
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume() вызван");
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop() вызван");
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy() вызван");
+    }
+
 }
